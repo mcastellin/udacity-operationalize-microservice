@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: makeprediction-frontend
+spec:
+  selector:
+    matchLabels:
+      run: makeprediction-frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: makeprediction-frontend
+    spec:
+      containers:
+      - name: makeprediction-frontend
+        image: mcastellin/udacity-make-prediction-frontend:latest
+        env:
+        - name: PREDICTION_API
+          value: "makeprediction-api"
+        - name: PREDICTION_API_PORT
+          value: "80"
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 500m
+          requests:
+            cpu: 200m
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: makeprediction-frontend
+  labels:
+    run: makeprediction-frontend
+spec:
+  ports:
+  - port: 80
+  selector:
+    run: makeprediction-frontend
