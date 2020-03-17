@@ -86,19 +86,19 @@ WARNING: scripts are configured to upload under the maintainer's account `mcaste
 
 The application docker images are already deployed to the public registry and you can run thse images in a Kubernetes cluster.
 
-### run_kubernetes.sh
+### `run_kubernetes.sh`
 
 This script will run the api with `kubectl`.
 - creates and start a pod to run the prediction API
 - exposes the API by forwarding local port `8000 -> 80`
 
-### run_kubernetes_stack.sh
+### `run_kubernetes_stack.sh`
 
 Will run both API and Frontend application in a kubernetes cluster. 
 - applies the `api/deploy.yaml` and `frontend/deploy.yaml` to the cluster to created deployments and services
 - exposes the `makeprediction-frontend` service by forwarding local port `8080 z-> 80`
 
-### run_kubernetes_autoscale.sh 
+### `run_kubernetes_autoscale.sh`
 
 A utility script to run the make-prediction API service with Kubernetes HPA (Horizontal Pod Autoscaling) configuration and exposes the service 
 by forwarding local port `8000 -> 80`.
@@ -129,6 +129,79 @@ kubectl delete hpa/makeprediction-api
 
 ## Repository Structure
 
-Here is a brief summary of the files in this repository
+Here is a brief summary of the files in this repository and what they are for
 
-TODO: update this section
+
+### `api/`
+
+The `api/` directory contains python code and tests for the prediction API Flask application.
+- `app.py` and `app_test.py` contains the application code and respective tests
+- `deploy.yaml` is a kubernetes definition file to deploy the API application kubernetes stack
+
+
+### `frontend/`
+
+The `frontend/` directory contains python code and tests for the frontend Flask application.
+- `app.py` contains the application code
+- `deploy.yaml` is a kubernetes definition file to deploy the frontend application kubernetes stack
+- `run_docker.sh` a bash script to run the frontend application in a docker container
+- `upload_docker.sh` upload the generated docker image in docker hub account
+
+
+### `run_docker.sh`
+
+Build and runs the Machine Learning Prediction API in a docker container.
+
+
+### `upload_docker.sh`
+
+A bash script to upload the generated image for the prediction API to the docker hub account.
+
+
+### `run_kubernetes.sh`
+
+Runs the predictions API Flask application as a pod in the kubernetes cluster:
+- Runs the predictions API application
+- Exposes pod's port with local forwarding
+
+
+### `run_kubernetes_stack.sh`
+
+Runs the predictions API and frontend applications stacks in the kubernetes cluster:
+- runs api application
+- runs frontend application
+- exposes frontend kubernetes service with local port forwarding
+
+
+### `run_kubernetes_autoscale.sh`
+
+Runs the predictions API application in kubernetes with horizontal pod autoscaling:
+- runs prediction API application
+- configures autoscaling for kubernetes deployment
+- exposes API application service with local port forwarding
+
+
+### `make_prediction.sh`
+
+Makes a call to the prediction API and prints out the result received from the server
+
+
+### `locustfile.py`
+
+The `locustfile.py` contains the code for `locust` to perform load testing on the application
+
+
+### `requirements.txt` and `requirements-dev.txt`
+
+List of Python requirements to run the application for docker containers and development
+
+
+### `model_data/`
+
+Contains the trained model for the application to make predictions on Boston house prices
+
+
+### `output_txt_files/`
+
+Contains files with the captured outputs for the excercise evaluation
+
