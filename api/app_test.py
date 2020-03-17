@@ -28,15 +28,13 @@ class TestFlaskApi(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_make_prediction(self):
-        print(PREDICTION_REQUEST)
-        print(PREDICT_URL)
         response = self.app.post(
             PREDICT_URL,
             data=json.dumps(PREDICTION_REQUEST),
             content_type="application/json",
         )
-        prediction = json.loads(response.get_data())
-        print(prediction)
+        data = json.loads(response.get_data())
+        self.assertEqual(data["prediction"][0], 20.35373177134412)
 
 
 if __name__ == "__main__":
