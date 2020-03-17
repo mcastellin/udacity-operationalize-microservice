@@ -30,6 +30,10 @@ while [ "$ready" != "true" ]; do
 done
 echo "Pod is ready."
 
+# Step 3.2
+# Listing kubernetes pods after application is ready
+kubectl get pods
+
 # Step 4:
 # Forward the container port to a host
 kubectl port-forward makepredictionapp 8000:80

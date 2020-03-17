@@ -1,1 +1,12 @@
-<paste log output from Kubernetes-mediated prediction, here>
+❯ ./run_kubernetes.sh
+pod/makepredictionapp created
+NAME                READY   STATUS              RESTARTS   AGE
+makepredictionapp   0/1     ContainerCreating   0          0s
+Waiting for pod to be ready...
+Waiting for pod to be ready...
+Pod is ready.
+NAME                READY   STATUS    RESTARTS   AGE
+makepredictionapp   1/1     Running   0          4s
+Forwarding from 127.0.0.1:8000 -> 80
+Forwarding from [::1]:8000 -> 80
+Handling connection for 8000
