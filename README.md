@@ -118,6 +118,11 @@ locust
 - configure the locust run by setting total users, hatch rate, and use `http://localhost:8000` as host.
 - click the *Start swarming* button to start the load testing
 
+![Locust homepage](/img/locust_home.png)
+
+![Locust chart](/img/locust_chart.png)
+
+
 ## Cleaning up Kubernetes Resources
 
 Run this from command line to delete all the kubernetes resources created by this project
