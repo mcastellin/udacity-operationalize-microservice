@@ -1,6 +1,7 @@
 setup:
+	# Creates the virtual environment
+	# run `source ~/.devops/bin/activate` to activate the environment
 	python3 -m venv ~/.devops
-	source ~/.devops/bin/activate
 
 install:
 	# This should be run from inside a virtualenv
