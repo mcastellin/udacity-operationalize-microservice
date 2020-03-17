@@ -12,6 +12,7 @@ dockerpath=mcastellin/udacity-make-prediction
 # Step 2:  
 # Authenticate & tag
 echo "Docker ID and Image: $dockerpath"
+docker login --username $DOCKER_USER -p $DOCKER_PASSWORD
 docker tag $dockerimage $dockerpath
 
 # Step 3:
