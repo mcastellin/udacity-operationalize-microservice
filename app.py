@@ -10,20 +10,23 @@ app = Flask(__name__)
 LOG = create_logger(app)
 LOG.setLevel(logging.INFO)
 
+
 def scale(payload):
     """Scales Payload"""
-    
+
     LOG.info(f"Scaling Payload: \n{payload}")
     scaler = StandardScaler().fit(payload.astype(float))
     scaled_adhoc_predict = scaler.transform(payload.astype(float))
     return scaled_adhoc_predict
+
 
 @app.route("/")
 def home():
     html = f"<h3>Sklearn Prediction Home</h3>"
     return html.format(format)
 
-@app.route("/predict", methods=['POST'])
+
+@app.route("/predict", methods=["POST"])
 def predict():
     """Performs an sklearn prediction
         
@@ -52,7 +55,7 @@ def predict():
         { "prediction": [ <val> ] }
         
         """
-    
+
     # Logging the input payload
     json_payload = request.json
     LOG.info(f"JSON payload: \n{json_payload}")
@@ -64,9 +67,10 @@ def predict():
     prediction = list(clf.predict(scaled_payload))
     # Log the output prediction value
     LOG.info(f"Calculated Prediction: {prediction}")
-    return jsonify({'prediction': prediction})
+    return jsonify({"prediction": prediction})
+
 
 if __name__ == "__main__":
     # load pretrained model as clf
     clf = joblib.load("./model_data/boston_housing_prediction.joblib")
-    app.run(host='0.0.0.0', port=80, debug=True) # specify port=80
+    app.run(host="0.0.0.0", port=80, debug=True)  # specify port=80
