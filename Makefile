@@ -2,8 +2,11 @@ setup:
 	# Creates the virtual environment
 	# run `source ~/.devops/bin/activate` to activate the environment
 	python3 -m venv ~/.devops
-	. ~/.devops/bin/activate
-	pip install --upgrade pip &&\
+
+install-dev:
+	# This will install development dependecies
+	source ~/.devops/bin/activate &&\
+		pip install --upgrade pip &&\
 		pip install -r requirements-dev.txt 
 
 install:

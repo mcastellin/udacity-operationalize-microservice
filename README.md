@@ -2,41 +2,133 @@
 
 ## Project Overview
 
-In this project, you will apply the skills you have acquired in this course to operationalize a Machine Learning Microservice API. 
+This project contains an operationalized Machine Learning Microservice API, a pre-trained `sklearn` model that predicts housing prices
+in Boston according to several features, such as average rooms in a home and data about highway access, teacher-to-pupil ratios, and so on. 
+You can read more about the data, which was initially taken from Kaggle, on [the data source site](https://www.kaggle.com/c/boston-housing).
 
-You are given a pre-trained, `sklearn` model that has been trained to predict housing prices in Boston according to several features, such as average rooms in a home and data about highway access, teacher-to-pupil ratios, and so on. You can read more about the data, which was initially taken from Kaggle, on [the data source site](https://www.kaggle.com/c/boston-housing). This project tests your ability to operationalize a Python flask app—in a provided file, `app.py`—that serves out predictions (inference) about housing prices through API calls. This project could be extended to any pre-trained machine learning model, such as those for image recognition and data labeling.
+As part of the Udacity Cloud DevOps Nanodegree program, 
+students have been provided with a machine learning API written in Python. The goal of this excercise is to prepare the application to:
+- Install and run in a Docker container
+- Create bash scripts to automatically generate and upload containers in a public registry
+- Configure and run the application in a Kubernetes cluster
+- Integrate a CI build with CircleCI to perform linting and regression testing
 
-### Project Tasks
-
-Your project goal is to operationalize this working, machine learning microservice using [kubernetes](https://kubernetes.io/), which is an open-source system for automating the management of containerized applications. In this project you will:
-* Test your project code using linting
-* Complete a Dockerfile to containerize this application
-* Deploy your containerized application using Docker and make a prediction
-* Improve the log statements in the source code for this application
-* Configure Kubernetes and create a Kubernetes cluster
-* Deploy a container using Kubernetes and make a prediction
-* Upload a complete Github repo with CircleCI to indicate that your code has been tested
-
-You can find a detailed [project rubric, here](https://review.udacity.com/#!/rubrics/2576/view).
-
-**The final implementation of the project will showcase your abilities to operationalize production microservices.**
-
----
 
 ## Setup the Environment
 
-* Create a virtualenv and activate it
-* Run `make install` to install the necessary dependencies
+To run this project you need to have Python3 and Docker with Kubernetes installed and a MacOs/Linux OS. We use `make` to build and run the code.
 
-### Running `app.py`
+First make sure you create Python virtual environment for your local development. Run 
+```bash
+make setup install-dev
+```
 
-1. Standalone:  `python app.py`
-2. Run in Docker:  `./run_docker.sh`
-3. Run in Kubernetes:  `./run_kubernetes.sh`
+Then source your newly created virtual environment with `source ~/.devops/bin/activate`
 
-### Kubernetes Steps
+## Building and Testing Applications
 
-* Setup and Configure Docker locally
-* Setup and Configure Kubernetes locally
-* Create Flask app in Container
-* Run via kubectl
+This project contains two Python Flask applications: `api/` and `frontend/`. Linting and unit testing steps are configured in the Makefile.
+To verify the application run `make lint test-api`. 
+
+To build Docker images, two Dockerfiles are provided:
+- `Dockerfile` under project directory contains build steps for the API application
+- `frontend/Dockerfile` contains the build steps to create the fronted application container
+
+## Running the Code
+
+### Run for development
+
+For local development you can simply run the application with your local python environment from the repository home:
+```bash
+source ~/.devops/bin/activate 
+python api/app.py
+```
+
+To run a smaple prediction, you can use the `make_prediction.sh` provided. `PORT=80 ./make_prediction.sh`
+
+### Run prediction API with docker
+
+In a terminal window, run `./run_docker.sh`. The script will build the docker image in your local registry and start the container.
+By default the container http port is bound to port `8000`
+
+When the container started your should see the following output:
+```bash
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: Do not use the development server in a production environment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://0.0.0.0:80/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 226-693-204
+```
+
+You are now ready to run a prediction. In a separate terminal window, run `./make_prediction.sh`
+
+### Run frontend with docker
+
+To run the frontend application a separate script is provided under the `frontend/` directory: `frontend/run_docker.sh`.
+
+The application will start and bind to port 8080. To test the application navigate to `http://localhost:8080/`
+
+### Upload generated images in docker hub
+
+The generated docker images can be pushed to the public registry in Docker Hub with the `upload_docker.sh` command. Simply run:
+```bash
+./upload_docker.sh
+frontend/upload_docker.sh
+```
+
+WARNING: scripts are configured to upload under the maintainer's account `mcastellin` so you need an access key to `docker login` successfully.
+
+## Run application in Kubernetes
+
+The application docker images are already deployed to the public registry and you can run thse images in a Kubernetes cluster.
+
+### run_kubernetes.sh
+
+This script will run the api with `kubectl`.
+- creates and start a pod to run the prediction API
+- exposes the API by forwarding local port `8000 -> 80`
+
+### run_kubernetes_stack.sh
+
+Will run both API and Frontend application in a kubernetes cluster. 
+- applies the `api/deploy.yaml` and `frontend/deploy.yaml` to the cluster to created deployments and services
+- exposes the `makeprediction-frontend` service by forwarding local port `8080 z-> 80`
+
+### run_kubernetes_autoscale.sh 
+
+A utility script to run the make-prediction API service with Kubernetes HPA (Horizontal Pod Autoscaling) configuration and exposes the service 
+by forwarding local port `8000 -> 80`.
+
+## Run Load Testing with Locust
+
+A `locustfile.py` is provided to run load test the application and test Kubernetes HPA rules. To run the test with locust follow these instructions.
+- run the `./run_kubernetes_autoscale.sh`
+- in a new terminal window launch Locust by running `locust` from project home directory
+```bash
+source ~/.devops/bin/activate
+locust
+[2020-03-17 19:23:34,576] /INFO/locust.main: Starting web monitor at http://*:8089
+[2020-03-17 19:23:34,576] /INFO/locust.main: Starting Locust 0.14.5
+```
+- locust server is now running at port `8089`. Open your browser and navigate to `http://localhost:8089/`
+- configure the locust run by setting total users, hatch rate, and use `http://localhost:8000` as host.
+- click the *Start swarming* button to start the load testing
+
+## Cleaning up Kubernetes Resources
+
+Run this from command line to delete all the kubernetes resources created by this project
+```bash
+kubectl delete -f api/deploy.yaml -f frontend/deploy.yaml
+kubectl delete pod/makepredictionapp
+kubectl delete hpa/makeprediction-api
+```
+
+## Repository Structure
+
+Here is a brief summary of the files in this repository
+
+TODO: update this section
