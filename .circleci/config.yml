@@ -41,9 +41,10 @@ jobs:
           command: |
             . venv/bin/activate
             make lint 
-      # Run unit tests
+
+      # Run unit tests for API
       - run:
-          name: run tests
+          name: run API test
           command: |
            . venv/bin/activate
-           make test
+           make test-api
