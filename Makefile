@@ -13,7 +13,7 @@ test-api:
 
 lint:
 	# This is linter for Dockerfiles
-	hadolint Dockerfile
+	hadolint Dockerfile frontend/Dockerfile
 	# This is a linter for Python source code linter: https://www.pylint.org/
 	pylint --disable=R,C,W1202 api/*.py frontend/*.py
 
