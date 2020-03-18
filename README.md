@@ -103,9 +103,9 @@ Will run both API and Frontend application in a kubernetes cluster.
 A utility script to run the make-prediction API service with Kubernetes HPA (Horizontal Pod Autoscaling) configuration and exposes the service 
 by forwarding local port `8000 -> 80`.
 
-To watch a demo of the Kubernetes autoscaling functionality click on the image below
+To watch a demo of the Kubernetes autoscaling functionality click on the link below
 
-![K8s Autoscaling](/img/autoscaling_test.gif)
+![K8s Autoscaling](/media/K8s_Autoscaling.mp4)
 
 ## Run Load Testing with Locust
 
@@ -122,9 +122,9 @@ locust
 - configure the locust run by setting total users, hatch rate, and use `http://localhost:8000` as host.
 - click the *Start swarming* button to start the load testing
 
-![Locust homepage](/img/locust_home.png)
+![Locust homepage](/media/locust_home.png)
 
-![Locust chart](/img/locust_chart.png)
+![Locust chart](/media/locust_chart.png)
 
 
 ## Cleaning up Kubernetes Resources
