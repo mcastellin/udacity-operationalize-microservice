@@ -23,7 +23,7 @@ MarkupSafe==1.1.1
 mccabe==0.6.1
 more-itertools==8.2.0
 msgpack==1.0.0
-numpy==1.17.2
+numpy==1.22.0
 packaging==20.3
 pandas==0.24.2
 pathspec==0.7.0
